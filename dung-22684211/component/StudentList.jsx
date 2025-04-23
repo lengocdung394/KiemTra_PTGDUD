@@ -1,84 +1,150 @@
 import React, { useState } from 'react';
 
 const initialStudents = [
-  { id: 1, name: 'Nguyễn Văn A', class: '12A1', age: 17 },
-  { id: 2, name: 'Trần Thị B', class: '11B2', age: 16 },
+    { id: 1, name: 'Nguyễn Văn A', class: '12A1', age: 17 },
+    { id: 2, name: 'Trần Thị B', class: '11B2', age: 16 },
 ];
 
 export default function StudentList() {
-  const [students, setStudents] = useState(initialStudents);
-  const [form, setForm] = useState({ name: '', class: '', age: '' });
+    // Chinh sua sinh vien
+    const [editingId, setEditingId] = useState(null);
+    const [editForm, setEditForm] = useState({ name: '', class: '', age: '' });
+    const [students, setStudents] = useState(initialStudents);
+    const [form, setForm] = useState({ name: '', class: '', age: '' });
 
-  const handleDelete = (id) => {
-    // Xoa sinh vien moi hang - da lam  commit 2.
-    setStudents(students.filter(s => s.id !== id));
-  };
-
-  const handleAdd = () => {
-    if (!form.name || !form.class || !form.age) return alert('Vui lòng nhập đầy đủ thông tin');
-    const newStudent = {
-      id: Date.now(),
-      name: form.name,
-      class: form.class,
-      age: parseInt(form.age),
+    const handleDelete = (id) => {
+        // Xoa sinh vien moi hang - da lam  commit 2.
+        setStudents(students.filter(s => s.id !== id));
     };
-    setStudents([...students, newStudent]);
-    setForm({ name: '', class: '', age: '' });
-  };
 
-  return (
-    <div className="max-w-2xl mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">Danh sách sinh viên</h1>
+    const handleAdd = () => {
+        if (!form.name || !form.class || !form.age) return alert('Vui lòng nhập đầy đủ thông tin');
+        const newStudent = {
+            id: Date.now(),
+            name: form.name,
+            class: form.class,
+            age: parseInt(form.age),
+        };
+        setStudents([...students, newStudent]);
+        setForm({ name: '', class: '', age: '' });
+    };
 
-      {/* Form thêm sinh viên */}
-      <div className="mb-6 bg-gray-50 p-4 rounded-xl shadow space-y-3">
-        <input
-          type="text"
-          placeholder="Họ tên"
-          value={form.name}
-          onChange={e => setForm({ ...form, name: e.target.value })}
-          className="w-full p-2 border rounded"
-        />
-        <input
-          type="text"
-          placeholder="Lớp"
-          value={form.class}
-          onChange={e => setForm({ ...form, class: e.target.value })}
-          className="w-full p-2 border rounded"
-        />
-        <input
-          type="number"
-          placeholder="Tuổi"
-          value={form.age}
-          onChange={e => setForm({ ...form, age: e.target.value })}
-          className="w-full p-2 border rounded"
-        />
-        <button
-          onClick={handleAdd}
-          className="w-full bg-blue-500 text-white py-2 rounded-xl hover:bg-blue-600"
-        >
-          Thêm sinh viên
-        </button>
-      </div>
+    // Ham edit 
+    const handleEditClick = (student) => {
+        setEditingId(student.id);
+        setEditForm({ name: student.name, class: student.class, age: student.age });
+    };
 
-      {/* Danh sách sinh viên */}
-      <div className="space-y-4">
-        {students.map(student => (
-          <div key={student.id} className="flex justify-between items-center bg-white shadow rounded-2xl p-4">
-            <div>
-              <p className="font-semibold">Tên: {student.name}</p>
-              <p>Lớp: {student.class}</p>
-              <p>Tuổi: {student.age}</p>
+    // Ham luu cap nhat
+
+    const handleSave = () => {
+        setStudents(students.map(s =>
+            s.id === editingId ? { ...s, ...editForm, age: parseInt(editForm.age) } : s
+        ));
+        setEditingId(null);
+    };
+
+
+    return (
+        <div className="max-w-2xl mx-auto p-4">
+            <h1 className="text-2xl font-bold mb-4">Danh sách sinh viên</h1>
+
+            {/* Form thêm sinh viên */}
+            <div className="mb-6 bg-gray-50 p-4 rounded-xl shadow space-y-3">
+                <input
+                    type="text"
+                    placeholder="Họ tên"
+                    value={form.name}
+                    onChange={e => setForm({ ...form, name: e.target.value })}
+                    className="w-full p-2 border rounded"
+                />
+                <input
+                    type="text"
+                    placeholder="Lớp"
+                    value={form.class}
+                    onChange={e => setForm({ ...form, class: e.target.value })}
+                    className="w-full p-2 border rounded"
+                />
+                <input
+                    type="number"
+                    placeholder="Tuổi"
+                    value={form.age}
+                    onChange={e => setForm({ ...form, age: e.target.value })}
+                    className="w-full p-2 border rounded"
+                />
+                <button
+                    onClick={handleAdd}
+                    className="w-full bg-blue-500 text-white py-2 rounded-xl hover:bg-blue-600"
+                >
+                    Thêm sinh viên
+                </button>
             </div>
-            <button
-              onClick={() => handleDelete(student.id)}
-              className="bg-red-500 text-white px-4 py-2 rounded-xl hover:bg-red-600"
-            >
-              Xoá
-            </button>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
+
+            {/* Danh sách sinh viên */}
+            <div className="space-y-4">
+                {students.map(student => (
+                    <div key={student.id} className="flex justify-between items-center bg-white shadow rounded-2xl p-4">
+                        {editingId === student.id ? (
+                            <div className="w-full space-y-2">
+                                <input
+                                    type="text"
+                                    value={editForm.name}
+                                    onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
+                                    className="w-full p-2 border rounded"
+                                />
+                                <input
+                                    type="text"
+                                    value={editForm.class}
+                                    onChange={(e) => setEditForm({ ...editForm, class: e.target.value })}
+                                    className="w-full p-2 border rounded"
+                                />
+                                <input
+                                    type="number"
+                                    value={editForm.age}
+                                    onChange={(e) => setEditForm({ ...editForm, age: e.target.value })}
+                                    className="w-full p-2 border rounded"
+                                />
+                                <div className="flex gap-2">
+                                    <button
+                                        onClick={handleSave}
+                                        className="bg-green-500 text-white px-4 py-2 rounded-xl hover:bg-green-600"
+                                    >
+                                        Lưu
+                                    </button>
+                                    <button
+                                        onClick={() => setEditingId(null)}
+                                        className="bg-gray-400 text-white px-4 py-2 rounded-xl hover:bg-gray-500"
+                                    >
+                                        Huỷ
+                                    </button>
+                                </div>
+                            </div>
+                        ) : (
+                            <>
+                                <div>
+                                    <p className="font-semibold">Tên: {student.name}</p>
+                                    <p>Lớp: {student.class}</p>
+                                    <p>Tuổi: {student.age}</p>
+                                </div>
+                                <div className="flex gap-2">
+                                    <button
+                                        onClick={() => handleEditClick(student)}
+                                        className="bg-yellow-500 text-white px-3 py-2 rounded-xl hover:bg-yellow-600"
+                                    >
+                                        Sửa
+                                    </button>
+                                    <button
+                                        onClick={() => handleDelete(student.id)}
+                                        className="bg-red-500 text-white px-3 py-2 rounded-xl hover:bg-red-600"
+                                    >
+                                        Xoá
+                                    </button>
+                                </div>
+                            </>
+                        )}
+                    </div>
+                ))}
+            </div>
+        </div>
+    );
 }
