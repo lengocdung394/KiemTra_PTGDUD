@@ -11,6 +11,8 @@ export default function StudentList() {
     const [editForm, setEditForm] = useState({ name: '', class: '', age: '' });
     const [students, setStudents] = useState(initialStudents);
     const [form, setForm] = useState({ name: '', class: '', age: '' });
+    // OSearch
+    const [searchTerm, setSearchTerm] = useState('');
 
     const handleDelete = (id) => {
         // Xoa sinh vien moi hang - da lam  commit 2.
@@ -44,10 +46,23 @@ export default function StudentList() {
         setEditingId(null);
     };
 
+    // Ham search
+
+    const filteredStudents = students.filter((s) =>
+        s.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
 
     return (
         <div className="max-w-2xl mx-auto p-4">
             <h1 className="text-2xl font-bold mb-4">Danh sách sinh viên</h1>
+            <input
+                type="text"
+                placeholder="Tìm kiếm theo tên..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="mb-4 w-full p-2 border rounded"
+            />
 
             {/* Form thêm sinh viên */}
             <div className="mb-6 bg-gray-50 p-4 rounded-xl shadow space-y-3">
@@ -82,7 +97,7 @@ export default function StudentList() {
 
             {/* Danh sách sinh viên */}
             <div className="space-y-4">
-                {students.map(student => (
+                {filteredStudents.map(student => (
                     <div key={student.id} className="flex justify-between items-center bg-white shadow rounded-2xl p-4">
                         {editingId === student.id ? (
                             <div className="w-full space-y-2">
