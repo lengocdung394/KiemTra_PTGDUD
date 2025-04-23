@@ -11,8 +11,11 @@ export default function StudentList() {
     const [editForm, setEditForm] = useState({ name: '', class: '', age: '' });
     const [students, setStudents] = useState(initialStudents);
     const [form, setForm] = useState({ name: '', class: '', age: '' });
-    // OSearch
+    // O Search
     const [searchTerm, setSearchTerm] = useState('');
+
+    //Loc
+    const [selectedClass, setSelectedClass] = useState('');
 
     const handleDelete = (id) => {
         // Xoa sinh vien moi hang - da lam  commit 2.
@@ -48,9 +51,13 @@ export default function StudentList() {
 
     // Ham search
 
-    const filteredStudents = students.filter((s) =>
-        s.name.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    const filteredStudents = students.filter((s) => {
+        const matchesSearchTerm = s.name.toLowerCase().includes(searchTerm.toLowerCase());
+        const matchesClass = selectedClass ? s.class === selectedClass : true;
+        return matchesSearchTerm && matchesClass;
+    });
+
+
 
 
     return (
@@ -63,6 +70,18 @@ export default function StudentList() {
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="mb-4 w-full p-2 border rounded"
             />
+            {/* Loc de tim lop */}
+            <select
+                value={selectedClass}
+                onChange={(e) => setSelectedClass(e.target.value)}
+                className="mb-4 p-2 border rounded"
+            >
+                <option value="">Chọn lớp</option>
+                <option value="12A1">12A1</option>
+                <option value="11B2">11B2</option>
+                <option value="10C3">10C3</option>
+                {/* Thêm các lớp khác nếu cần */}
+            </select>
 
             {/* Form thêm sinh viên */}
             <div className="mb-6 bg-gray-50 p-4 rounded-xl shadow space-y-3">
