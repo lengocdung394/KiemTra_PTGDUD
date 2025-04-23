@@ -10,6 +10,7 @@ export default function StudentList() {
   const [form, setForm] = useState({ name: '', class: '', age: '' });
 
   const handleDelete = (id) => {
+    // Xoa sinh vien moi hang - da lam  commit 2.
     setStudents(students.filter(s => s.id !== id));
   };
 
